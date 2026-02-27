@@ -48,8 +48,29 @@ Pass the generated `.hcmask` file directly into Hashcat. To get the absolute max
 
 ```bash
 # Example against a WPA2/PMKID hash using the stable workload profile
-hashcat -m 22000 target_hash.hc22000 core_word_8char_mode3.hcmask -a 3 -w 2 -d 1
+hashcat -m 22000 target_hash.hc22000 masks -a 3 -w 2 -d 1
 ```
+
+## ⚡ Quick Start Guide & Real-World Example
+
+To see the power of v2.0, follow this example to create a surgical strike on an 8-character core word:
+
+1. **Launch the script:** `python generate_masks.py`
+2. **Set strict limits:** Choose **3** for consonants and **2** for vowels. This tells the script to only include patterns with 1-2 consonants or 1 vowel in a row.
+3. **Filter the Alphabet:** Remove rare letters by entering `bcdghklmnprstvy` as your consonants.
+4. **Choose Casing:** Select **Mode 1** for All Lowercase.
+5. **Output:** Name the file `masks`.
+
+**The result:** You just reduced **256** possible patterns down to **16** highly optimal core word patterns.
+
+### Expected Output Example
+Your `masks` file will contain optimized lines that look like this:
+```text
+bcdghklmnprstvy,aeiou,?1?1?2?1?1?2?1?1
+bcdghklmnprstvy,aeiou,?1?1?2?1?1?2?1?2
+... (14 more optimized patterns)
+```
+Each line tells Hashcat exactly which characters to use for `?1` and `?2`, ensuring your **GTX 1650 Ti** (or higher) is only checking high-probability human words.
 
 ## 📊 Hardware Performance Benchmarks
 Below are estimated benchmark speeds for popular NVIDIA GPUs across WPA2 and other common fast hashes (MD5, NTLM, SHA1, SHA256) when running mask attacks.
@@ -64,7 +85,7 @@ Below are estimated benchmark speeds for popular NVIDIA GPUs across WPA2 and oth
 | **GTX 1650 Ti** | 180 kH/s | 11 GH/s | 15 GH/s | 3.2 GH/s | 1.3 GH/s |
 | **GTX 1650** | 150 kH/s | 9 GH/s | 12 GH/s | 2.8 GH/s | 1.1 GH/s |
 
-*(Note: Speeds vary based on cooling, overclocks, and specific Hashcat release versions. MH/s = Megahashes per second, GH/s = Gigahashes per second).*
+*(Note: Speeds vary based on cooling, overclocks, and specific Hashcat release versions).*
 
 ## 🛣️ Roadmap & Future Updates
 **Coming Soon:** I am actively developing an extended version of this tool that automatically generates hybrid masks (appending numeric combinations like `?d?d` and special characters directly into the mask patterns). 
